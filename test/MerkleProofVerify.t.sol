@@ -12,17 +12,16 @@ contract TestMerkleProofVerify is Test {
 
     function setUp() public {
         mpv = new MerkleProofVerify();
-        bytes32 newStateRoot = 0xed4d6370d52b7fe6bac733b87552308976c80d1bb1e0d1ddebd8cce5a1a9756e;
+        bytes32 newStateRoot = 0x22ee6ab614c8c9cf484420c59fa9cef2bf9a8536095c5c5572ac1b6918c0e705;
         mpv.updateStateRoot(newStateRoot);
     }
 
     function testVerifyInclusionProof() public view {
-        bytes32[] memory siblings = new bytes32[](3);
-        siblings[2] = 0x987c2fe2acea5e9b02f350667b070def7c505177f84ab1b989bfed34f4ed8692;
-        siblings[1] = 0x0000000000000000000000000000000000000000000000000000000000000000;
+        bytes32[] memory siblings = new bytes32[](2);
         siblings[0] = 0x71ab6f4175312c78ee0bc776ab91b0e6f86356e7f44807b6856a894231d4d98d;
-        bytes32 value = 0xd0560b0c0313a71c09854daf25b80e455a05bf0e01edb23503acb9b174e04c2b;
-        SparseMerkleProof.MerkleProof memory merkleProof = SparseMerkleProof.MerkleProof(5, value, siblings);
+        siblings[1] = 0x9e356f158483696de5f958ab07e54c06e9d16f32eba5c9d5895f72a2d8e0dd44;
+        bytes32 value = 0x789f6365f94749dcc6c41d74a7dd3a8ef1b2384715577c73fc52025dbc549e13;
+        SparseMerkleProof.MerkleProof memory merkleProof = SparseMerkleProof.MerkleProof(3, value, siblings);
         mpv.verifyInclusionProof(merkleProof);
     }
 

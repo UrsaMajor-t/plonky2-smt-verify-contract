@@ -10,7 +10,7 @@ library SparseMerkleProof {
         bytes32[] siblings;
     }
 
-    // Compure Merkle root.
+    // Compute Merkle root.
     function _computeMerkleRoot(MerkleProof memory proof) internal pure returns (bytes32) {
         bytes32 computedHash = proof.value;
         uint256 index = proof.index;
@@ -29,7 +29,7 @@ library SparseMerkleProof {
         return computedHash;
     }
 
-    // Compure Merkle root in the case that the proof index has reverse bit order.
+    // Compute Merkle root in the case that the proof index has reverse bit order.
     function _computeMerkleRootRbo(MerkleProof memory proof) internal pure returns (bytes32) {
         bytes32 computedHash = proof.value;
         uint256 index = proof.index << (256 - proof.siblings.length);
@@ -46,5 +46,13 @@ library SparseMerkleProof {
         }
 
         return computedHash;
+    }
+
+    // Provide the Merkle root and Merkle proof, then compute the Merkle root based on the Merkle proof.
+    // Next, compare the computed Merkle root with the provided Merkle root to validate the integrity of the Merkle data.
+    function verifyMerkleProof(bytes32 root, MerkleProof memory proof) internal pure returns (bool) {
+        bytes32 computedHash = _computeMerkleRoot(proof);
+
+        return computedHash == root;
     }
 }

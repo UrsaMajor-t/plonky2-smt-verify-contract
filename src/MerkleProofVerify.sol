@@ -13,8 +13,8 @@ contract MerkleProofVerify is IMerkleProofVerifyInterface {
     }
 
     function verifyInclusionProof(SparseMerkleProof.MerkleProof memory inclusionProof) external view {
-        bytes32 expectMerkleRoot = SparseMerkleProof._computeMerkleRoot(inclusionProof);
-        if (stateRoot != expectMerkleRoot) {
+        bool verified = SparseMerkleProof.verifyMerkleProof(stateRoot, inclusionProof);
+        if (!verified) {
             revert InvalidMerkleRoot();
         }
     }

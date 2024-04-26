@@ -10,6 +10,7 @@
   out = 'out'
   solc = "0.8.23"
   src = 'contracts'
+  libraries = ["src/library/GoldilocksPoseidon.sol:GoldilocksPoseidon:0x81d8aaf7d4CfcC07d4343C47fb0100a76423f787"]
 
 [profile.default.optimizer_details]
   constantOptimizer = false

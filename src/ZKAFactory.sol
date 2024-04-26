@@ -32,9 +32,9 @@ contract ZKAFactory is Ownable, IZKAFactory {
         ++userNonce[user];
     }
 
-    function proofToStorage(bytes32 proofKey) external override onlyVerifier(msg.sender) {
+    function proofToStorage(bytes32 proofKey, address verifier) external override onlyVerifier(msg.sender) {
         proofInStorage[proofKey] = true;
-        updateUserNonce(msg.sender);
+        updateUserNonce(verifier);
         emit proofToStorageInfo(proofKey, true);
     }
 

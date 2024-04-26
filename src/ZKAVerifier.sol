@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {IZKAVerifier} from "./interfaces/IZKAVerifier.sol";
-import {IZKAFactory} from "./interfaces/IZKAFactory.sol";
+import { IZKAVerifier } from "./interfaces/IZKAVerifier.sol";
+import { IZKAFactory } from "./interfaces/IZKAFactory.sol";
 
 contract ZKAVerifier is IZKAVerifier {
     error AlreadyInitialized();
@@ -11,7 +11,7 @@ contract ZKAVerifier is IZKAVerifier {
     address public override ZKAFactory;
     address public override ZKVerifier;
 
-    constructor() payable {}
+    constructor() payable { }
 
     function initializer(address _ZKAFactory, address _ZKVerifier) external {
         if (ZKAFactory != address(0) || ZKVerifier != address(0)) {
@@ -22,11 +22,11 @@ contract ZKAVerifier is IZKAVerifier {
     }
 
     function zkpVerify(bytes calldata zkProof) external override {
-        (bool success,) = ZKVerifier.call{gas: 600000}(zkProof);
+        (bool success,) = ZKVerifier.call{ gas: 600_000 }(zkProof);
         if (success != true) {
             revert VerifyFail();
         }
-        IZKAFactory(ZKAFactory).proofToStorage(fetchProofKey(zkProof));
+        IZKAFactory(ZKAFactory).proofToStorage(fetchProofKey(zkProof), msg.sender);
     }
 
     function fetchProofKey(bytes calldata proof) public view returns (bytes32) {

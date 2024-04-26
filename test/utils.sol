@@ -17,4 +17,9 @@ contract Utils is Test {
 
         (_pA, _pB, _pC, pubSignals) = abi.decode(_calldata, (uint256[2], uint256[2][2], uint256[2], uint256[37]));
     }
+
+    function _readEncodeCalldataFromFile(string memory filename) internal returns (bytes memory _calldata) {
+        string memory file = vm.readFile(filename);
+        _calldata = file.readBytes(".calldata");
+    }
 }

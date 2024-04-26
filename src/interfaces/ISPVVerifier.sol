@@ -2,16 +2,9 @@
 pragma solidity ^0.8.23;
 
 interface ISPVVerifier {
-    function verify(
-        uint256[2] memory _pA,
-        uint256[2][2] memory _pB,
-        uint256[2] memory _pC,
-        uint256[37] memory _pubSignals
-    ) external;
+    function verify(bytes calldata proof) external;
 
     function setVerifier(address _verifier) external;
-
-    function spvVerifierImpl() external view returns (address);
 
     function merkleRoot(uint256 verifiedBatchNumber) external view returns (bytes32);
 

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.23;
 
-import "./library/SparseMerkleProof.sol";
-import "./interfaces/IMerkleProofVerifyInterface.sol";
+import "./library/SparseMerkleProofLib.sol";
+import "./interfaces/IMerkleProofVerify.sol";
 import "./library/Errors.sol";
 
-contract MerkleProofVerify is IMerkleProofVerifyInterface {
+contract MerkleProofVerify is IMerkleProofVerify {
     bytes32 public stateRoot;
 
     function updateStateRoot(bytes32 newStateRoot) external {

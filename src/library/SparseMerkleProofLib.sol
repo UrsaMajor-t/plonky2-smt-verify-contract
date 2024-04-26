@@ -3,7 +3,7 @@ pragma solidity ^0.8.23;
 
 import "./GoldilocksPoseidon.sol";
 
-library SparseMerkleProof {
+library SparseMerkleProofLib {
     struct MerkleProof {
         uint256 index;
         bytes32 value;

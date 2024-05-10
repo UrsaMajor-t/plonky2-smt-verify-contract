@@ -26,10 +26,10 @@ contract ZKAVerifier is IZKAVerifier {
         if (success != true) {
             revert VerifyFail();
         }
-        IZKAFactory(ZKAFactory).proofToStorage(fetchProofKey(zkProof), msg.sender);
+        IZKAFactory(ZKAFactory).proofToStorage(fetchProofKey(zkProof, ZKVerifier), msg.sender);
     }
 
-    function fetchProofKey(bytes calldata proof) public view returns (bytes32) {
-        return keccak256(abi.encode(proof, address(this), msg.sender, IZKAFactory(ZKAFactory).userNonce(msg.sender)));
+    function fetchProofKey(bytes calldata proof, address verifyContract) public view returns (bytes32) {
+        return keccak256(abi.encode(proof, verifyContract, msg.sender, IZKAFactory(ZKAFactory).userNonce(msg.sender)));
     }
 }

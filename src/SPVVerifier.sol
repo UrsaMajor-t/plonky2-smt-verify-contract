@@ -7,18 +7,17 @@ import "./library/SparseMerkleProofLib.sol";
 import "./interfaces/IMerkleProofVerify.sol";
 import "./interfaces/IPolygonRollupManager.sol";
 import "./library/Errors.sol";
-import "forge-std/console.sol";
 
 contract SPVVerifier is ISPVVerifier {
     error NotOwner();
     error VerifyError();
 
     mapping(uint256 verifiedBatchNumber => bytes32) public override merkleRoot;
-    address public override spvVerifierImpl;
+    address public spvVerifierImpl;
     address public override owner;
     address public polygonRollupManager;
 
-    uint256 constant RollupID = 1;
+    uint32 constant RollupID = 1;
 
     constructor() {
         owner = msg.sender;
@@ -34,19 +33,20 @@ contract SPVVerifier is ISPVVerifier {
     function verify(bytes calldata proof) external {
         (uint256[2] memory _pA, uint256[2][2] memory _pB, uint256[2] memory _pC, uint256[37] memory _pubSignals) =
             abi.decode(proof, (uint256[2], uint256[2][2], uint256[2], uint256[37]));
+
         bytes32 _newRoot = bytes32(
             abi.encodePacked(
                 uint64(_pubSignals[3]), uint64(_pubSignals[2]), uint64(_pubSignals[1]), uint64(_pubSignals[0])
             )
         );
-        uint256 verifiedBatchNumber = _pubSignals[36];
+
+        uint64 verifiedBatchNumber = uint64(_pubSignals[36]);
 
         bytes memory verifiedStateRoot = new bytes(32);
         for (uint256 index = 0; index < 32; index++) {
             verifiedStateRoot[index] = bytes1(uint8(_pubSignals[index + 4]));
         }
 
-        console.logBytes(verifiedStateRoot);
         // bool mptSuccess = proof.verify(merkleRoot, leaf);
         bool cirSuccess = IVerifier(spvVerifierImpl).verifyProof(_pA, _pB, _pC, _pubSignals);
         bool batchVerified = verifyBatchInfo(RollupID, verifiedBatchNumber, bytes32(verifiedStateRoot));
@@ -66,7 +66,7 @@ contract SPVVerifier is ISPVVerifier {
         spvVerifierImpl = _verifier;
     }
 
-    function setPolygonRollupManage(address _rollup) external onlyOwner {
+    function setPolygonRollupManager(address _rollup) external onlyOwner {
         polygonRollupManager = _rollup;
     }
 
@@ -74,21 +74,22 @@ contract SPVVerifier is ISPVVerifier {
         merkleRoot[verifiedBatchNumber] = _newRoot;
     }
 
-    function verifyBatchInfo(uint256 rollupID, uint256 verifiedBatchNumber, bytes32 verifiedStateRoot)
+    function verifyBatchInfo(uint32 rollupID, uint64 verifiedBatchNumber, bytes32 verifiedStateRoot)
         internal
+        view
         onlyOwner
         returns (bool)
     {
         bytes32 _stateRoot =
             IPolygonRollupManager(polygonRollupManager).getRollupBatchNumToStateRoot(rollupID, verifiedBatchNumber);
+
         return verifiedStateRoot == _stateRoot;
     }
 
-    function verifySMT(SparseMerkleProofLib.MerkleProof memory inclusionProof, uint256 verifiedBatchNumber)
-        external
-        view
-        returns (bool)
-    {
+    function verifyLeafInclusionProof(
+        SparseMerkleProofLib.MerkleProof memory inclusionProof,
+        uint256 verifiedBatchNumber
+    ) external view returns (bool) {
         return SparseMerkleProofLib.verifyMerkleProof(merkleRoot[verifiedBatchNumber], inclusionProof);
     }
 }

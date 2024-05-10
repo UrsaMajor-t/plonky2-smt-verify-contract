@@ -10,7 +10,5 @@ interface IZKAVerifier {
 
     function initializer(address _ZKAFactory, address _ZKVerifier) external;
 
-    function fetchProofKey(
-        bytes calldata proof
-    ) external view returns (bytes32);
+    function fetchProofKey(bytes calldata proof, address verifyContract) external view returns (bytes32);
 }

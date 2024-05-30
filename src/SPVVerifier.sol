@@ -92,4 +92,12 @@ contract SPVVerifier is ISPVVerifier {
     ) external view returns (bool) {
         return SparseMerkleProofLib.verifyMerkleProof(merkleRoot[verifiedBatchNumber], inclusionProof);
     }
+
+    function verifyLeafInclusionProofTest(SparseMerkleProofLib.MerkleProof memory inclusionProof)
+        external
+        pure
+        returns (bytes32)
+    {
+        return SparseMerkleProofLib.verifyMerkleProofTest(inclusionProof);
+    }
 }

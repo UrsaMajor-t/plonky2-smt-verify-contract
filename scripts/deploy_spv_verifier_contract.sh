@@ -6,3 +6,4 @@ forge create --rpc-url $SEPOLIA_RPC_URL \
 --etherscan-api-key $ETHERSCAN_API \
 --verify \
 src/SPVVerifier.sol:SPVVerifier 
+

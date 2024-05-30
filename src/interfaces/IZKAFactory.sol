@@ -22,7 +22,7 @@ interface IZKAFactory {
 
     /// @dev only called by the ZKAVerifier contract
     /// @param proofKey the key of the proof, keccak256(abi.encodePack(proof, ZKAVerifierAddress))
-    function proofToStorage(bytes32 proofKey,address verifier) external;
+    function proofToStorage(bytes32 proofKey, address verifier) external;
 
     /// @dev deploy a new ZKAVerifier contract
     /// @param _zkpVerifierName the name of the ZKAVerifier

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.23;
+pragma solidity ^0.8.19;
 
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
@@ -7,6 +7,7 @@ import "forge-std/console.sol";
 import "src/SPVVerifier.sol";
 import "src/library/Groth16Verifier.sol";
 import "src/library/GoldilocksPoseidon.sol";
+import "src/library/SparseMerkleProofLib.sol";
 
 import "./utils.sol";
 
@@ -26,9 +27,9 @@ contract TestSpv is Utils {
 
     function test_verify_fork_sepolia() public {
         vm.selectFork(sepoliaFork);
-        vm.rollFork(5_780_170);
-        vm.prank(address(0x596444771ED471004B6780d244cE17F26dB2beCc));
-        address spv_address = address(0xaB8336f983BFfbe56CBBeB6dDE893224A66EA154);
+        vm.rollFork(5_899_056);
+        vm.prank(address(0xa54753229AD35abC403B53E629A28820C8041eaA));
+        address spv_address = address(0x668C6F178D11d9B794757862c239b865E79c2F3A);
         bytes memory proof = _readEncodeCalldataFromFile("test/data/verify.json");
         SPVVerifier(spv_address).verify(proof);
     }
@@ -38,12 +39,29 @@ contract TestSpv is Utils {
         spv.verify(proof);
     }
 
-    function test_verify_batch_info_fork_sepolia() public {
-        // vm.selectFork(sepoliaFork);
-        // vm.rollFork(5_781_090);
-        address rollup = address(0x32d33D5137a7cFFb54c5Bf8371172bcEc5f310ff);
-        spv.setPolygonRollupManager(rollup);
-        // bytes32 stateRoot = hex"1dd7c042ef64b115312d6b6237ad4b51e2ba48fe3d9155624c7b0fbd6141c688";
-        // spv.verifyBatchInfoTest(1, 76_920, stateRoot);
+    function test_verify_leaf_inclusion_proof_fork_sepolia() public {
+        vm.selectFork(sepoliaFork);
+        vm.rollFork(5_899_056);
+        vm.prank(address(0xa54753229AD35abC403B53E629A28820C8041eaA));
+        address spv_address = address(0x668C6F178D11d9B794757862c239b865E79c2F3A);
+        bytes32[] memory siblings = new bytes32[](2);
+        siblings[0] = 0xea927c8b9bf6e0e9fad1ff39ff2c3cac626c8eb5ffc2d0efd7b6864dabfce25b;
+        siblings[1] = 0x0000000000000000000000000000000000000000000000000000000000000000;
+        bytes32 value = 0x55d7b8113058bd2f6968b658a96f59e42695fea1cfc9adc34bf4bbd58570da59;
+        SparseMerkleProofLib.MerkleProof memory merkleProof = SparseMerkleProofLib.MerkleProof(9, value, siblings);
+        bool success = SPVVerifier(spv_address).verifyLeafInclusionProof(merkleProof, 79_542);
+        console.log("success %s", success);
+    }
+
+    function test_verify_leaf_inclusion_proof_mock() public view {
+        bytes32[] memory siblings = new bytes32[](2);
+        siblings[0] = 0xea927c8b9bf6e0e9fad1ff39ff2c3cac626c8eb5ffc2d0efd7b6864dabfce25b;
+        siblings[1] = 0x0000000000000000000000000000000000000000000000000000000000000000;
+        bytes32 value = 0x55d7b8113058bd2f6968b658a96f59e42695fea1cfc9adc34bf4bbd58570da59;
+        bytes32 root = 0x170710439eab73dd579f2183a3ea65edc6edce7ced51783d9d02ad92d49a6b55;
+        SparseMerkleProofLib.MerkleProof memory merkleProof = SparseMerkleProofLib.MerkleProof(9, value, siblings);
+        bytes32 root1 = spv.verifyLeafInclusionProofTest(merkleProof);
+        console.log("root");
+        console.logBytes32(root1);
     }
 }

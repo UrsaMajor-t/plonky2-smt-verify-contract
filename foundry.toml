@@ -2,15 +2,14 @@
   evm_version = "shanghai"
   ffi = true
   fs_permissions = [{ access = "read", path = "./test/data/" }, { access = "read", path = "./snark-verifiers" }, { access = "read", path = "./script/config/" }]
-  gas_limit = "18446744073709551615"
   libs = ['lib']
-  memory_limit = 43554432
   optimizer = true
-  optimizer_runs = 100000
+  optimizer_runs = 1_000_000
   out = 'out'
-  solc = "0.8.23"
-  src = 'contracts'
+  # solc = "0.8.19"
+  src = 'src'
   libraries = ["src/library/GoldilocksPoseidon.sol:GoldilocksPoseidon:0x81d8aaf7d4CfcC07d4343C47fb0100a76423f787"]
+
 
 [profile.default.optimizer_details]
   constantOptimizer = false

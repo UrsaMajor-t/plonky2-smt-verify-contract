@@ -20,5 +20,7 @@ contract ZkADeploy is Script {
         console.log("factory address: %s", address(factory));
 
         factory.setimplZKAVerifier(address(verifier));
+
+        vm.stopBroadcast();
     }
 }

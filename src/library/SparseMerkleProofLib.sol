@@ -55,4 +55,8 @@ library SparseMerkleProofLib {
 
         return computedHash == root;
     }
+
+    function verifyMerkleProofTest(MerkleProof memory proof) internal pure returns (bytes32 computedHash) {
+        computedHash = _computeMerkleRoot(proof);
+    }
 }
